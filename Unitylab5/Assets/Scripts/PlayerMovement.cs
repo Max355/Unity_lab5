@@ -10,6 +10,7 @@ public class PlayerMovement : MonoBehaviour
     public bool invertX;
     public bool invertY;
     private CharacterController characterController;
+   
 
     private Vector3 movementVector;
     void Start()
@@ -43,5 +44,24 @@ public class PlayerMovement : MonoBehaviour
 
         transform.rotation = Quaternion.Euler(transform.rotation.eulerAngles.x, transform.rotation.eulerAngles.y + mouseVector.x, transform.rotation.eulerAngles.z);
         cameraPosition.rotation = Quaternion.Euler(cameraPosition.rotation.eulerAngles + new Vector3(mouseVector.y, 0f, 0f));
+
+        //Sound
+        if (Input.GetButton("Vertical") || Input.GetButton("Horizontal"))
+        {
+            if (!FindObjectOfType<AudioManager>().IsThisSoundPlaying("PlayerMove"))
+            {
+                FindObjectOfType<AudioManager>().Play("PlayerMove");
+            }
+        }
+        else
+        {
+            FindObjectOfType<AudioManager>().Stop("PlayerMove");
+        }
     }
+
+    
+
+    
+
+  
 }
