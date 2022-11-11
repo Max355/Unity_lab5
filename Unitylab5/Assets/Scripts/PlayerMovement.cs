@@ -1,6 +1,8 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class PlayerMovement : MonoBehaviour
 {
@@ -9,13 +11,18 @@ public class PlayerMovement : MonoBehaviour
     public float mouseSensitivity;
     public bool invertX;
     public bool invertY;
-    private CharacterController characterController;
-   
+    private CharacterController characterController;   
+    AudioSource audioSource;
+    [SerializeField] AudioClip success;
+    [SerializeField] float levelLoadDelay = 2f;
+
+    
 
     private Vector3 movementVector;
     void Start()
     {
         characterController = GetComponent<CharacterController>();
+        audioSource = GetComponent<AudioSource>();
     }
 
     void Update()
@@ -58,6 +65,38 @@ public class PlayerMovement : MonoBehaviour
             FindObjectOfType<AudioManager>().Stop("PlayerMove");
         }
     }
+    
+    private void OnCollisionEnter(Collision other) 
+    {
+        switch (other.gameObject.tag)
+        {
+            case "Finish":
+                 StartSuccessSequence();
+                 break;
+        }
+    }
+
+
+    void StartSuccessSequence()
+    {
+       audioSource.PlayOneShot(success);
+       Invoke("LoadNextLevel", levelLoadDelay);
+    }
+    void LoadNextLevel()
+    {
+        
+        int currentSceneIndex = SceneManager.GetActiveScene().buildIndex;
+        int nextSceneIndex = currentSceneIndex + 1;
+        if (nextSceneIndex == SceneManager.sceneCountInBuildSettings)
+        {
+            nextSceneIndex = 0;
+        }
+        SceneManager.LoadScene(nextSceneIndex);
+    }
+
+
+
+
 
     
 
